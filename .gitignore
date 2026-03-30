@@ -1,0 +1,23 @@
+
+# macOS
+.DS_Store
+
+# Swift Package / Tuist
+.build/
+.swiftpm/
+.Tuist/
+
+# Xcode
+DerivedData/
+Derived/
+*.xcworkspace/xcuserdata/
+*.xcodeproj/xcuserdata/
+*.xcuserstate
+/xcuserdata/
+
+# Logs
+*.log
+
+# Environment
+.env
+
