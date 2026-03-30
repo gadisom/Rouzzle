@@ -44,36 +44,6 @@ struct TaskListView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            HStack(alignment: .center) {
-                Button {
-                    dismiss()
-                } label: {
-                    Image(systemName: "chevron.backward")
-                        .font(.ptSemiBold(size: 20))
-                }
-                .frame(width: 36, height: 44)
-                
-                Spacer()
-                
-                Text("\(viewModel.routineItem.emoji) \(viewModel.routineItem.title)")
-                    .font(.ptSemiBold(size: 18))
-                    .foregroundStyle(.primary)
-                    .lineLimit(1)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                
-                Spacer()
-                
-                Button {
-                    isShowingRoutineSettingsSheet.toggle()
-                } label: {
-                    Image(systemName: "ellipsis")
-                        .font(.ptSemiBold(size: 20))
-                }
-                .frame(width: 36, height: 44)
-            }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 8)
-
             ScrollView {
                 VStack(alignment: .leading, spacing: 16) {
                     HStack(alignment: .bottom) {
@@ -116,6 +86,7 @@ struct TaskListView: View {
                     else {
                         ForEach(viewModel.routineItem.taskList) { task in
                             TaskStatusPuzzle(task: task)
+                                .padding(.horizontal)
                         }
                     }
                     
@@ -184,6 +155,19 @@ struct TaskListView: View {
 //                routineStore.toastMessage = "수정에 성공했습니다."
 //                routineStore.fetchViewTask()
 //            }
+        }
+        .navigationTitle(viewModel.routineItem.title)
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar(.visible, for: .navigationBar)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    isShowingRoutineSettingsSheet.toggle()
+                } label: {
+                    Image(systemName: "ellipsis")
+                        .font(.ptSemiBold(size: 20))
+                }
+            }
         }
     }
 }
