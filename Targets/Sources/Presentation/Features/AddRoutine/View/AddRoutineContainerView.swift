@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Entity
 
 struct AddRoutineContainerView: View {
     private let dependencies: AppDependencies
@@ -16,6 +17,7 @@ struct AddRoutineContainerView: View {
     
     init(
         dependencies: AppDependencies,
+        targetRoutine: RoutineItem? = nil,
         onRoutineSaved: @escaping () -> Void = {}
     ) {
         self.dependencies = dependencies
@@ -23,7 +25,8 @@ struct AddRoutineContainerView: View {
         _viewModel = State(wrappedValue: AddRoutineViewModel(
             routineDataUseCase: dependencies.routineDataUseCase,
             recommendTaskUseCase: dependencies.recommendTaskUseCase,
-            notificationService: dependencies.notificationService
+            notificationService: dependencies.notificationService,
+            targetRoutine: targetRoutine
         ))
     }
     
@@ -41,10 +44,6 @@ struct AddRoutineContainerView: View {
                 if viewModel.step != .info {
                     Spacer()
                 }
-            }
-            .overlay {
-                Text(viewModel.step == .info ? "루틴 등록" : "할 일 등록")
-                    .font(.ptSemiBold())
             }
             .padding()
             

@@ -83,14 +83,16 @@ struct RoutineHomeView: View {
                             }
                         }
                         
-                        Button {
-                            isShowingAddRoutineSheet.toggle()
-                        } label: {
-                            Image("RequestRoutine")
-                                .resizable()
-                                .frame(maxWidth: .infinity)
-                                .aspectRatio(contentMode: .fit)
-                                .padding(.horizontal)
+                        if routines.isEmpty {
+                            Button {
+                                isShowingAddRoutineSheet.toggle()
+                            } label: {
+                                Image("RequestRoutine")
+                                    .resizable()
+                                    .frame(maxWidth: .infinity)
+                                    .aspectRatio(contentMode: .fit)
+                                    .padding(.horizontal)
+                            }
                         }
                     }
                     .padding(.vertical)

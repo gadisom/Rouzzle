@@ -16,15 +16,33 @@ final class AddRoutineViewModel {
     private let routineDataUseCase: RoutineDataUseCaseProtocol
     private let recommendTaskUseCase: RecommendTaskUseCaseProtocol
     private let notificationService: NotificationServiceProtocol
+    private let targetRoutine: RoutineItem?
 
     init(
         routineDataUseCase: RoutineDataUseCaseProtocol,
         recommendTaskUseCase: RecommendTaskUseCaseProtocol,
-        notificationService: NotificationServiceProtocol
+        notificationService: NotificationServiceProtocol,
+        targetRoutine: RoutineItem? = nil
     ) {
         self.routineDataUseCase = routineDataUseCase
         self.recommendTaskUseCase = recommendTaskUseCase
         self.notificationService = notificationService
+        self.targetRoutine = targetRoutine
+        
+        if let targetRoutine {
+            self.title = targetRoutine.title
+            self.emoji = targetRoutine.emoji
+            self.repeatCount = targetRoutine.repeatCount ?? 1
+            self.interval = targetRoutine.interval ?? 1
+            self.isNotificationEnabled = targetRoutine.alarmIDs != nil
+            self.selectedDateWithTime = Dictionary(
+                uniqueKeysWithValues: targetRoutine.dayStartTime.compactMap { key, value in
+                    guard let day = Day(rawValue: key), let date = value.toDate() else { return nil }
+                    return (day, date)
+                }
+            )
+            self.routineTask = targetRoutine.taskList.map { $0.toRoutineTask() }
+        }
     }
     
     // MARK: - Types
@@ -148,6 +166,7 @@ final class AddRoutineViewModel {
         
         // 새로운 루틴 생성
         let newRoutine = RoutineItem(
+            id: targetRoutine?.id ?? UUID(),
             title: title,
             emoji: emoji ?? "🧩",
             dayStartTime: dayStartTime,
@@ -158,6 +177,10 @@ final class AddRoutineViewModel {
         newRoutine.taskList = routineTask.map { $0.toTaskList() }
         for task in newRoutine.taskList {
             task.routineItem = newRoutine
+        }
+        
+        if let targetRoutine {
+            try routineDataUseCase.deleteRoutine(targetRoutine)
         }
         
         try routineDataUseCase.addRoutine(newRoutine)
