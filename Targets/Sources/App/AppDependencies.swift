@@ -12,16 +12,7 @@ struct AppDependencies {
 extension AppDependencies {
     @MainActor
     static func makePreview() -> AppDependencies {
-        let modelContainer = SampleData.shared.modelContainer
-        let routineDataUseCase = RoutineDataUseCase(swiftDataService: SwiftDataServiceImpl(modelContainer: modelContainer))
-        let recommendTaskUseCase = RecommendTaskUseCase(recommendTaskService: RecommendTaskService())
-        
-        return AppDependencies(
-            routineDataUseCase: routineDataUseCase,
-            recommendTaskUseCase: recommendTaskUseCase,
-            notificationService: NotificationManager(),
-            quoteProvider: QuotesProvider()
-        )
+        AppCompositionRoot.makeAppDependencies(modelContainer: SampleData.shared.modelContainer)
     }
 }
 #endif
