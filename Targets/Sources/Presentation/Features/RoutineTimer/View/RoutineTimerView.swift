@@ -15,7 +15,7 @@ struct RoutineTimerView: View {
     // 나가기 -> 알럿 (알림재설정 or 그대로 나가기)
     @State private var showExitAlert: Bool = false
     @State private var detents: Set<PresentationDetent> = [.fraction(0.5)]
-    @Binding var path: NavigationPath
+    let onRoutineCompleted: () -> Void
     
     var body: some View {
         ZStack(alignment: .top) {
@@ -154,7 +154,7 @@ struct RoutineTimerView: View {
         .fullScreenCover(isPresented: $viewModel.routineCompleted) {
             RoutineCompleteView(
                 viewModel: viewModel,
-                path: $path
+                onDone: onRoutineCompleted
             )
         }
         .onAppear {
@@ -183,6 +183,6 @@ struct RoutineTimerView: View {
             routine: RoutineItem.sampleData[0],
             routineDataUseCase: dependencies.routineDataUseCase
         ),
-        path: .constant(NavigationPath())
+        onRoutineCompleted: {}
     )
 }

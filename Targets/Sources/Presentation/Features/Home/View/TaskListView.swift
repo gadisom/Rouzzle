@@ -14,7 +14,7 @@ struct TaskListView: View {
     let routine: RoutineItem
     let dependencies: AppDependencies
     let onRoutineDataChanged: (() -> Void)?
-    @Binding var path: NavigationPath
+    @ObservedObject var router: HomeRouter
     @StateObject var viewModel: TaskListViewModel
     @State private var showTimerView = false
     @State private var isShowingRoutineSettingsSheet: Bool = false
@@ -24,12 +24,12 @@ struct TaskListView: View {
     
     init(
         routine: RoutineItem,
-        path: Binding<NavigationPath>,
+        router: HomeRouter,
         dependencies: AppDependencies,
         onRoutineDataChanged: (() -> Void)? = nil
     ) {
         self.routine = routine
-        self._path = path
+        self.router = router
         self.dependencies = dependencies
         self.onRoutineDataChanged = onRoutineDataChanged
         _viewModel = StateObject(wrappedValue: TaskListViewModel(
@@ -171,7 +171,10 @@ struct TaskListView: View {
                 routine: viewModel.routineItem,
                 routineDataUseCase: dependencies.routineDataUseCase
                 ),
-                path: $path
+                onRoutineCompleted: {
+                    showTimerView = false
+                    router.popToRoot()
+                }
             )
         }
         .fullScreenCover(isPresented: $isShowingEditRoutineSheet) {
@@ -187,6 +190,6 @@ struct TaskListView: View {
 
 //#Preview {
 //    NavigationStack {
-//        TaskListView(routine: RoutineItem.sampleData[0], path: .constant(NavigationPath()), viewModel: AddRoutineViewModel())
+//        TaskListView(routine: RoutineItem.sampleData[0], router: HomeRouter(), dependencies: AppDependencies.makePreview())
 //    }
 //}
