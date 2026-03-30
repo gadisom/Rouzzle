@@ -8,18 +8,13 @@
 import SwiftUI
 import Entity
 
-// Navigation Path
-enum NavigationDestination: Hashable {
-    case routineTimerView(routine: RoutineItem) // 어떤 루틴이 선택되었는지 넘겨주기
-}
-
 // Main View
 struct RoutineHomeView: View {
     var routines: [RoutineItem]
     let dependencies: AppDependencies
     let onDataChanged: () -> Void
     @State private var isShowingAddRoutineSheet: Bool = false
-    @State private var path = NavigationPath()
+    @StateObject private var router = HomeRouter()
     @State private var routineHomeViewModel: RoutineHomeViewModel
     @State private var selectedFilter = false
 
@@ -46,7 +41,7 @@ struct RoutineHomeView: View {
     }
     
     var body: some View {
-        NavigationStack(path: $path) {
+        NavigationStack(path: $router.routes) {
             ZStack {
                 Color(.systemBackground)
                     .ignoresSafeArea()
@@ -84,7 +79,7 @@ struct RoutineHomeView: View {
                         
                         ForEach(filteredRoutines) { routine in
                             RoutineItemView(routine: routine) {
-                                path.append(NavigationDestination.routineTimerView(routine: routine))
+                                router.push(.taskList(routine: routine))
                             }
                         }
                         
@@ -112,12 +107,12 @@ struct RoutineHomeView: View {
                 routineHomeViewModel.updateQuote()
             }
             .toolbar(.hidden, for: .navigationBar)
-            .navigationDestination(for: NavigationDestination.self) { destination in
-                switch destination {
-                case .routineTimerView(let routine):
+            .navigationDestination(for: HomeRoute.self) { route in
+                switch route {
+                case .taskList(let routine):
                     TaskListView(
                         routine: routine,
-                        path: $path,
+                        router: router,
                         dependencies: dependencies,
                         onRoutineDataChanged: onDataChanged
                     )

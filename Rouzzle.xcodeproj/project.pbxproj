@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		0433846301C712AC1A6B0E3D /* RoutinePersistenceMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C54B87197880F5383E7DCD9 /* RoutinePersistenceMapper.swift */; };
+		04DE6CE956D18FF909191352 /* HomeRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37ED2D16167BBAF96A4A2F65 /* HomeRouter.swift */; };
 		06024EA0B4640AE2DDD04A3F /* QuotesProviderProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = E74B5775EB9E117BFA97FBA5 /* QuotesProviderProtocol.swift */; };
 		06679508C1C7242A85E3D848 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 80620405ED79EA52BE027974 /* Assets.xcassets */; };
 		06B07BAFAFB6F0139888FE3C /* EmojiComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 675AE7E6160BC95044159CF2 /* EmojiComponents.swift */; };
@@ -58,6 +59,7 @@
 		64452352834DFCC5D2D08CA7 /* Pretendard-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = DA7DA922AE413CE4268405E5 /* Pretendard-Regular.otf */; };
 		6456AA62AAB90EF5826C7D19 /* Rouzzle_iOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7798CDEC9C58FB0EF90D85A /* Rouzzle_iOSApp.swift */; };
 		64733DDBE1B77ABB6867A291 /* RoutineCompleteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 532A56D443400E3C17CF2800 /* RoutineCompleteView.swift */; };
+		650179F68EBC37F96CAA1744 /* HomeRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD4D9FF2C0802D91932F81DD /* HomeRoute.swift */; };
 		66E1A3A62289B3A83697FC3E /* Pretendard-ExtraLight.otf in Resources */ = {isa = PBXBuildFile; fileRef = B966D359E9F922699847072B /* Pretendard-ExtraLight.otf */; };
 		67F699EF50E11C78816420F2 /* RecommendViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF140FEA4BD1171619507F90 /* RecommendViewModel.swift */; };
 		687CD374D0A8D0719D04AFD7 /* TuistBundle+Rouzzle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C85C3EE9F3596AA94CE353A /* TuistBundle+Rouzzle.swift */; };
@@ -226,6 +228,7 @@
 		2FC24C0042CDBD50F4D7182B /* SummaryCountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SummaryCountView.swift; sourceTree = "<group>"; };
 		2FF598716F05E8838AAFED15 /* RoutineItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoutineItemView.swift; sourceTree = "<group>"; };
 		362B24EB5AD71E00CCD98337 /* TimerState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerState.swift; sourceTree = "<group>"; };
+		37ED2D16167BBAF96A4A2F65 /* HomeRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeRouter.swift; sourceTree = "<group>"; };
 		396BC09270E54F4FBDC725B7 /* CalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarView.swift; sourceTree = "<group>"; };
 		39829D61F3E4E9923A1D19C6 /* StatisticView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticView.swift; sourceTree = "<group>"; };
 		3C6D05A643D28E7BE17630CC /* Pretendard-Light.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pretendard-Light.otf"; sourceTree = "<group>"; };
@@ -281,6 +284,7 @@
 		B6D8CD8729BDEFF30AA9B842 /* EmojiSearchKeywords.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojiSearchKeywords.swift; sourceTree = "<group>"; };
 		B966D359E9F922699847072B /* Pretendard-ExtraLight.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pretendard-ExtraLight.otf"; sourceTree = "<group>"; };
 		BAC0C464C1B4CF8A01EB610A /* EntityPreviewData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityPreviewData.swift; sourceTree = "<group>"; };
+		BD4D9FF2C0802D91932F81DD /* HomeRoute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeRoute.swift; sourceTree = "<group>"; };
 		BE9A6B391BD52680778882B1 /* Pretendard-Black.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pretendard-Black.otf"; sourceTree = "<group>"; };
 		BF49239D713BA6E7E6B5E4BC /* HeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderView.swift; sourceTree = "<group>"; };
 		C36730CC7F5F200C99717565 /* RoutineItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoutineItem.swift; sourceTree = "<group>"; };
@@ -459,6 +463,7 @@
 			isa = PBXGroup;
 			children = (
 				F92AA47A215F07434FB6A5CF /* Model */,
+				B2FD1A1AD25DA693C4C104D3 /* Navigation */,
 				45ABB17F0517C16F7B5A6DE8 /* View */,
 				E1F522AC6EEF5F13B31617B8 /* ViewModel */,
 			);
@@ -711,6 +716,15 @@
 				1753453C58980536D9499FB2 /* RoutineTimerViewModel.swift */,
 			);
 			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		B2FD1A1AD25DA693C4C104D3 /* Navigation */ = {
+			isa = PBXGroup;
+			children = (
+				BD4D9FF2C0802D91932F81DD /* HomeRoute.swift */,
+				37ED2D16167BBAF96A4A2F65 /* HomeRouter.swift */,
+			);
+			path = Navigation;
 			sourceTree = "<group>";
 		};
 		B3827605D446BD4C12BCC9B5 /* Modifiers */ = {
@@ -1138,6 +1152,8 @@
 				218865211CB1A66CF563CE33 /* WeekSetTimeView.swift in Sources */,
 				305F5B98D249252ABD5672B9 /* AddRoutineViewModel.swift in Sources */,
 				375914946AD4D21ED8A7A8A6 /* Untitled.swift in Sources */,
+				650179F68EBC37F96CAA1744 /* HomeRoute.swift in Sources */,
+				04DE6CE956D18FF909191352 /* HomeRouter.swift in Sources */,
 				3F03A7D2A8C6DC4ABE4B36F2 /* HeaderView.swift in Sources */,
 				119C32B496516418F64C6A21 /* RoutineFilterToggle.swift in Sources */,
 				9D94E492B5508AA7B8CCCB96 /* RoutineHomeView.swift in Sources */,
