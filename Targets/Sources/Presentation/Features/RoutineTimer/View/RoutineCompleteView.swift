@@ -9,9 +9,8 @@ import SwiftUI
 import Entity
 
 struct RoutineCompleteView: View {
-    @Environment(\.dismiss) private var dismiss
     @Bindable var viewModel: RoutineTimerViewModel
-    @Binding var path: NavigationPath
+    let onDone: () -> Void
     
     var body: some View {
         VStack {
@@ -89,7 +88,7 @@ struct RoutineCompleteView: View {
             .padding(.top, 51)
             
             RouzzleButton(buttonType: .complete) {
-                path.removeLast(path.count)
+                onDone()
             }
             .padding()
         }
@@ -103,6 +102,6 @@ struct RoutineCompleteView: View {
             routine: RoutineItem.sampleData[0],
             routineDataUseCase: dependencies.routineDataUseCase
         ),
-        path: .constant(NavigationPath())
+        onDone: {}
     )
 }

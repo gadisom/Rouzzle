@@ -7,11 +7,12 @@
 
 import SwiftUI
 import Entity 
+
 struct AddRoutineTaskView: View {
     @Bindable var viewModel: AddRoutineViewModel
     @State var routineByTime: RoutineCategoryByTime?
     @State private var isCustomTaskSheet: Bool = false
-    @State private var detents: Set<PresentationDetent> = [.fraction(0.12)]
+    @State private var newTaskDetents: Set<PresentationDetent> = [.fraction(0.25)]
     
     var body: some View {
         VStack {
@@ -19,6 +20,9 @@ struct AddRoutineTaskView: View {
                 VStack {
                     SelectedTaskListView(
                         selectedTask: $viewModel.routineTask,
+                        onAddTaskTap: {
+                            isCustomTaskSheet = true
+                        },
                         minHeight: 280
                     )
                     .padding(.bottom, 20)
@@ -45,10 +49,23 @@ struct AddRoutineTaskView: View {
                             print("❌ 루틴 저장 실패: \(error.localizedDescription)")
                         }
                     }
-                    .padding(.horizontal)
+                    .padding(.top, 8)
                 }
                 .padding()
             }
+        }
+        .sheet(isPresented: $isCustomTaskSheet) {
+            NewTaskSheet { recommendTask in
+                let routineTask = recommendTask.toRoutineTask()
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    if let index = viewModel.routineTask.firstIndex(where: { $0.hashValue == routineTask.hashValue }) {
+                        viewModel.routineTask.remove(at: index)
+                    } else {
+                        viewModel.routineTask.append(routineTask)
+                    }
+                }
+            }
+            .presentationDetents(newTaskDetents)
         }
     }
 }
@@ -59,29 +76,51 @@ struct SelectedTaskListView: View {
     @State private var showDeleteIcon = false
     @State private var draggedItem: RoutineTask?
     @Binding var selectedTask: [RoutineTask]
+    let onAddTaskTap: () -> Void
     let minHeight: CGFloat
     
     var body: some View {
         VStack(spacing: 14) {
             if selectedTask.isEmpty {
-                Text("할 일을 추가해 주세요!")
-                    .frame(maxWidth: .infinity, minHeight: minHeight, alignment: .center)
-                    .foregroundStyle(.gray)
-                    .font(.ptRegular())
+                VStack(spacing: 12) {
+                    Button {
+                        onAddTaskTap()
+                    } label: {
+                        HStack(spacing: 8) {
+                            Text("할일을 추가해 주세요")
+                                .font(.ptRegular())
+                                .foregroundStyle(.gray)
+                            
+                            Image(systemName: "plus.circle.fill")
+                                .font(.system(size: 18, weight: .medium))
+                                .foregroundStyle(.gray)
+                        }
+                    }
+                    .frame(maxWidth: .infinity, alignment: .center)
+                }
+                .frame(maxWidth: .infinity, minHeight: minHeight, alignment: .center)
             } else {
                 HStack {
-                    Text("목록 수정")
+                    Text("목록")
                         .font(.ptBold(size: 18))
                     
                     Spacer()
                     
-                    // 삭제 버튼
-                    Button {
-                        showDeleteIcon.toggle()
-                    } label: {
-                        // 삭제버튼 눌렸을 때, 목록이동이미지->삭제버튼
-                        Image(systemName: showDeleteIcon ? "arrow.up.arrow.down" : "trash")
-                            .foregroundColor(.gray)
+                    HStack(spacing: 10) {
+                        Button {
+                            showDeleteIcon.toggle()
+                        } label: {
+                            Image(systemName: showDeleteIcon ? "arrow.up.arrow.down" : "trash")
+                                .foregroundColor(.gray)
+                        }
+                        
+                        Button {
+                            onAddTaskTap()
+                        } label: {
+                            Image(systemName: "plus")
+                                .font(.system(size: 16, weight: .semibold))
+                                .foregroundStyle(.gray)
+                        }
                     }
                 }
                 
@@ -154,7 +193,7 @@ struct RecommendTaskListView: View {
     var body: some View {
         VStack {
             HStack {
-                Text("추천 할 일")
+                Text("추천")
                     .font(.ptBold())
                 Spacer()
                 Button {

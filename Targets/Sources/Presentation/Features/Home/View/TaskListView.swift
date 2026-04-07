@@ -8,13 +8,13 @@
 import SwiftUI
 import Entity
 
-// TODO: - 루틴 삭제하기 뻑남, 루틴 수정하기 빈 화면
+// TODO: - 루틴 삭제하기 뻑남
 
 struct TaskListView: View {
     let routine: RoutineItem
     let dependencies: AppDependencies
     let onRoutineDataChanged: (() -> Void)?
-    @Binding var path: NavigationPath
+    @ObservedObject var router: HomeRouter
     @StateObject var viewModel: TaskListViewModel
     @State private var showTimerView = false
     @State private var isShowingRoutineSettingsSheet: Bool = false
@@ -24,12 +24,12 @@ struct TaskListView: View {
     
     init(
         routine: RoutineItem,
-        path: Binding<NavigationPath>,
+        router: HomeRouter,
         dependencies: AppDependencies,
         onRoutineDataChanged: (() -> Void)? = nil
     ) {
         self.routine = routine
-        self._path = path
+        self.router = router
         self.dependencies = dependencies
         self.onRoutineDataChanged = onRoutineDataChanged
         _viewModel = StateObject(wrappedValue: TaskListViewModel(
@@ -44,55 +44,18 @@ struct TaskListView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            HStack(alignment: .center) {
-                Button {
-                    dismiss()
-                } label: {
-                    Image(systemName: "chevron.backward")
-                        .font(.ptSemiBold(size: 20))
-                }
-                .frame(width: 36, height: 44)
-                
-                Spacer()
-                
-                Text("\(viewModel.routineItem.emoji) \(viewModel.routineItem.title)")
-                    .font(.ptSemiBold(size: 18))
-                    .foregroundStyle(.primary)
-                    .lineLimit(1)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                
-                Spacer()
-                
-                Button {
-                    isShowingRoutineSettingsSheet.toggle()
-                } label: {
-                    Image(systemName: "ellipsis")
-                        .font(.ptSemiBold(size: 20))
-                }
-                .frame(width: 36, height: 44)
-            }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 8)
-
             ScrollView {
                 VStack(alignment: .leading, spacing: 16) {
-                    HStack(alignment: .bottom) {
-                        Label(viewModel.routineItem.todayStartTimeFormatted, systemImage: "clock")
+                    HStack {
+                        Spacer()
+
+                        Text("소요시간: \(totalDurationText)")
                             .font(.ptMedium())
                             .foregroundStyle(Color.subHeadlineFontColor)
-                        
-                        Spacer()
-                        
-                        Button {
-                            //isShowingAddTaskSheet.toggle()
-                        } label: {
-                            Image(systemName: "plus")
-                                .font(.title)
-                        }
                     }
                     .padding(.bottom, 5)
                     .padding(.horizontal)
-                    
+
                     if viewModel.routineItem.taskList.isEmpty {
                         HStack {
                             Spacer()
@@ -101,10 +64,6 @@ struct TaskListView: View {
                                     .font(.title2)
                                     .foregroundColor(.gray.opacity(0.5))
                                     .font(.subheadline)
-                                Image(systemName: "plus.circle")
-                                    .foregroundColor(.gray.opacity(0.5))
-                                    .font(.system(size: 28))
-                                
                             }
                             .padding(.vertical, 50)
                             Spacer()
@@ -116,32 +75,19 @@ struct TaskListView: View {
                     else {
                         ForEach(viewModel.routineItem.taskList) { task in
                             TaskStatusPuzzle(task: task)
+                                .padding(.horizontal)
                         }
                     }
-                    
-                    RouzzleButton(buttonType: .timerStart, disabled: viewModel.routineItem.taskList.isEmpty) {
-                        showTimerView.toggle()
-                        
-                        viewModel.cancelTodayAlarms()
-                    }
-                    .padding(.horizontal)
-                    
-                    RecommendTaskListView(recommendTask: $viewModel.recommendTodoTask) {
-                        viewModel.getRecommendTask()
-                    } taskAppend: { routineTask in
-                        withAnimation(.easeInOut(duration: 0.3)) {
-                            if let index = viewModel.routineTask.firstIndex(where: { $0.hashValue == routineTask.hashValue }) {
-                                viewModel.routineTask.remove(at: index)
-                            } else {
-                                viewModel.routineTask.append(routineTask)
-                                viewModel.saveRoutineTasks(task: routineTask)
-                            }
-                        }
-                    }
-                    .padding(.horizontal)
                 }
                 .padding(.bottom)
             }
+            RouzzleButton(buttonType: .timerStart, disabled: viewModel.routineItem.taskList.isEmpty) {
+                showTimerView.toggle()
+                
+                viewModel.cancelTodayAlarms()
+            }
+            .padding(.horizontal)
+            .padding(.vertical, 12)
         }
         .sheet(isPresented: $isShowingRoutineSettingsSheet) {
             RoutineSettingsSheet(
@@ -149,9 +95,6 @@ struct TaskListView: View {
                 isShowingDeleteAlert: $isShowingDeleteAlert
             )
             .presentationDetents([.fraction(0.25)])
-        }
-        .onAppear {
-            viewModel.getRecommendTask()
         }
         .customAlert(
             isPresented: $isShowingDeleteAlert,
@@ -171,22 +114,66 @@ struct TaskListView: View {
                 routine: viewModel.routineItem,
                 routineDataUseCase: dependencies.routineDataUseCase
                 ),
-                path: $path
+                onRoutineCompleted: {
+                    showTimerView = false
+                    router.popToRoot()
+                }
             )
         }
         .fullScreenCover(isPresented: $isShowingEditRoutineSheet) {
-        
-//            EditRoutineView(viewModel: EditRoutineViewModel(routine: routineStore.selectedRoutineItem!)) { _ in
-//                routineStore.loadState = .completed
-//                routineStore.toastMessage = "수정에 성공했습니다."
-//                routineStore.fetchViewTask()
-//            }
+            AddRoutineContainerView(
+                dependencies: dependencies,
+                targetRoutine: routine,
+                onRoutineSaved: {
+                    onRoutineDataChanged?()
+                }
+            )
         }
+        .navigationTitle(viewModel.routineItem.title)
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar(.visible, for: .navigationBar)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    isShowingRoutineSettingsSheet.toggle()
+                } label: {
+                    Image(systemName: "ellipsis")
+                        .font(.ptSemiBold(size: 20))
+                }
+            }
+        }
+    }
+
+    private var totalDurationText: String {
+        let totalSeconds = viewModel.routineItem.taskList.reduce(0) { $0 + $1.timer }
+        
+        let totalMinutes = totalSeconds / 60
+        let totalHours = totalMinutes / 60
+        let remainMinutes = totalMinutes % 60
+        let remainSeconds = totalSeconds % 60
+        
+        if totalMinutes == 0 {
+            return "\(remainSeconds)초"
+        }
+        
+        if totalHours == 0 {
+            return "\(totalMinutes)분"
+        }
+        
+        if remainMinutes == 0 && remainSeconds == 0 {
+            return "\(totalHours)시간"
+        }
+        
+        if remainSeconds == 0 {
+            return "\(totalHours)시간 \(remainMinutes)분"
+        }
+        
+        return "\(totalHours)시간 \(remainMinutes)분 \(remainSeconds)초"
     }
 }
 
 //#Preview {
 //    NavigationStack {
-//        TaskListView(routine: RoutineItem.sampleData[0], path: .constant(NavigationPath()), viewModel: AddRoutineViewModel())
+//        TaskListView(routine: RoutineItem.sampleData[0], router: HomeRouter(), dependencies: AppDependencies.makePreview())
 //    }
 //}
